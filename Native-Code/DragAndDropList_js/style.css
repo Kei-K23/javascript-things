@@ -1,0 +1,60 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.dragAndDrop-container {
+    background-color: #ddd;
+    border-radius: 0.8rem;
+    padding: 1.5rem 1.8rem;
+    width: 50vw;
+}
+
+.item {
+    padding: 1rem 1.3rem;
+    margin-bottom: 1rem;
+    border: 0.16rem black solid;
+    border-radius: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: grab;
+}
+
+.item i {
+    font-size: 2rem;
+}
+
+.item .profile {
+    display: flex;
+    align-items: center;
+}
+
+.item.dragging {
+    opacity: 0.7;
+}
+
+.profile .img {
+    width: 60px;
+    border-radius: 50%;
+}
+
+.profile .name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-left: 1rem;
+}

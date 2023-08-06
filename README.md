@@ -28,4 +28,4 @@ Contrubution requirement-
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). Make sure to add a copy of the license file to your repository.
+This project is licensed under the [MIT License](LICENSE).

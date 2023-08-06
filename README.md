@@ -20,6 +20,7 @@ You can run the code provided in this project by using live server or just copy 
 
 All contributions are really appreciated and welcome. Please come up with some ideas and contribute in this project. You can contrubute by make forking this repo, make some changes or add new JavaScript things to the project after that make pull request. 
 
+
 Contrubution requirement-
 - must be written in vanilla javascript
 - should be include at least one *.html, *.css and *.js files

@@ -18,7 +18,11 @@ You can run the code provided in this project by using live server or just copy 
 
 ## Contributing
 
-All contributions are really appreciated and welcome. Please come up with some ideas and contribute in this project. You can contrubute by make forking this repo, make some changes or add new JavaScript things to the project after that make pull request
+All contributions are really appreciated and welcome. Please come up with some ideas and contribute in this project. You can contrubute by make forking this repo, make some changes or add new JavaScript things to the project after that make pull request. 
+Contrubuting requirement-
+- must be written in vanilla javascript
+- should be include at least one *.html, *.css and *.js files
+- try to use standard and produce clean code   
 
 ## License
 

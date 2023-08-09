@@ -1,0 +1,54 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 2rem 3rem;
+}
+
+.mainContainer {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.listContainer {
+    flex: 1;
+    padding: 1rem 2rem;
+    border: 1px solid black;
+}
+
+.list {
+    border: 1px solid black;
+    list-style: none;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    cursor: grab;
+}
+
+.list[data-list="red"] {
+    background-color: red;
+}
+
+.list[data-list="blue"] {
+    background-color: blue;
+}
+
+.list[data-list="green"] {
+    background-color: green;
+}
+
+.list[data-list="yellow"] {
+    background-color: yellow;
+}
+
+.list[data-list="orange"] {
+    background-color: orange;
+}
+
+.list[data-list="purple"] {
+    background-color: purple;
+}

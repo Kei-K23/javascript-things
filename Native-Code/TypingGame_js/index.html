@@ -8,6 +8,26 @@
     <title>Typing Game JS</title>
   </head>
   <body>
+    <div class="modal-popup">
+      <div class="modal-content">
+        <h2>Your result</h2>
+        <ul class="modal-results">
+          <li class="modal-result">
+            <h3 class="modal-wpm">Words Per Minute (WPM): <b>0</b></h3>
+          </li>
+          <li class="modal-result">
+            <h3 class="modal-cpm">Characters Per Minute (CPM): <b>0</b></h3>
+          </li>
+          <li class="modal-result">
+            <h3 class="modal-accuracy">Accuracy: <b>0%</b></h3>
+          </li>
+          <li class="modal-result">
+            <h3 class="modal-mistakes">Total Mistakes: <b>0</b></h3>
+          </li>
+        </ul>
+        <h2 class="modal-tryAgain">Try Again</h2>
+      </div>
+    </div>
     <section class="typing-game">
       <div class="text-container">
         <p></p>
@@ -26,8 +46,11 @@
           <li class="result">
             <h3 class="cpm">CPM: <b>0</b></h3>
           </li>
+          <li class="result">
+            <h3 class="accuracy">Accuracy: <b>0%</b></h3>
+          </li>
         </ul>
-        <button class="tryAgain">Try Again</button>
+        <h2 class="tryAgain">Try Again</h2>
       </div>
     </section>
   </body>

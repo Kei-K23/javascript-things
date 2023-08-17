@@ -10,7 +10,12 @@ const timeLeftEle = document.querySelector(".timeLeft b");
 const mistakesEle = document.querySelector(".mistakes b");
 const wpmEle = document.querySelector(".wpm b");
 const cpmEle = document.querySelector(".cpm b");
+const accuracyEle = document.querySelector(".accuracy b");
 const tryAgain = document.querySelector(".tryAgain");
+
+const modalTryAgain = document.querySelector(".modal-tryAgain");
+
+const modalPopup = document.querySelector(".modal-popup");
 
 // init global value
 let maxTime = 60,
@@ -19,7 +24,7 @@ let maxTime = 60,
   isTimingStart = false,
   currentParagraph,
   currentIndex = 0,
-  totalCorrectChar = 0,
+  correctCha = 0,
   isTyping = false,
   mistakes = 0,
   wpm,
@@ -43,6 +48,30 @@ function checkForKeyWord(keyWord) {
   }
 }
 
+function displayModalPopUp(wpm, cpm, accuracy, mistakes) {
+  modalPopup.innerHTML = "";
+  modalPopup.innerHTML = `
+  <div class="modal-content">
+        <h2>Your result</h2>
+        <ul class="modal-results">
+          <li class="modal-result">
+            <h3 class="modal-wpm">Words Per Minute (WPM): <b>${wpm}</b></h3>
+          </li>
+          <li class="modal-result">
+            <h3 class="modal-cpm">Characters Per Minute (CPM): <b>${cpm}</b></h3>
+          </li>
+          <li class="modal-result">
+            <h3 class="modal-accuracy">Accuracy: <b>${accuracy}%</b></h3>
+          </li>
+          <li class="modal-result">
+            <h3 class="modal-mistakes">Total Mistakes: <b>${mistakes}</b></h3>
+          </li>
+        </ul>
+        <h2 class="modal-tryAgain">Try Again</h2>
+      </div>
+  `;
+}
+
 function displayText() {
   const textContainer = document.querySelector(".text-container p");
   const tmp_fragment = document.createDocumentFragment();
@@ -61,31 +90,45 @@ function displayText() {
   firstNode.classList.add("active");
 }
 
+// calculate duration
 function duration() {
   unSubscribeSetInterval = setInterval(() => {
-    if (timeLeft >= 0) {
+    if (timeLeft > 0) {
       timeLeft--;
       timeLeftEle.innerText = timeLeft;
-
-      let calculateWPM = Math.floor(
-        (currentIndex - mistakes) / (maxTime - timeLeft)
-      );
-
-      console.log(calculateWPM);
-
-      wpm =
-        calculateWPM < 0 || !calculateWPM || calculateWPM === Infinity
-          ? 0
-          : calculateWPM;
-      wpmEle.innerText = wpm;
+      calculateSpeed();
     } else {
       clearInterval(unSubscribeSetInterval);
-      timeLeft = maxTime;
+      modalPopup.style.display = "flex";
     }
   }, 1000);
 }
 
 displayText();
+
+// Calculate WPM and CPM
+function calculateSpeed() {
+  const totalTyped = currentIndex;
+  const totalMistakes = mistakes;
+  const totalCorrectCha = correctCha - mistakes;
+  const totalCha = currentParagraph.length;
+  const timeInMinutes = (maxTime - timeLeft) / 60; // Convert seconds to minutes
+
+  const grossWPM = (totalTyped - totalMistakes) / timeInMinutes;
+  const netWPM = Math.round(grossWPM - totalMistakes / timeInMinutes);
+  const netCPM = Math.round(netWPM * 5); // Assuming an average word length of 5 characters
+  const accuracy = Math.round((totalCorrectCha / totalCha) * 100);
+
+  const wpm = !netCPM || netCPM < 0 || netCPM === NaN ? 0 : Math.max(netWPM, 0);
+  const cpm = !netCPM || netCPM < 0 || netCPM === NaN ? 0 : Math.max(netCPM, 0);
+  // update DOM
+  wpmEle.innerText = wpm;
+  // Ensure it's not negative
+  cpmEle.innerText = cpm;
+  // Ensure it's not negative
+  accuracyEle.innerText = `${accuracy}%`;
+  mistakesEle.innerText = totalMistakes;
+}
 
 document.addEventListener("keydown", (e) => {
   if (!isTimingStart && !isTyping) {
@@ -96,9 +139,16 @@ document.addEventListener("keydown", (e) => {
   if (checkForKeyWord(e.key)) {
     console.log("Ban");
   } else {
-    const textContainer = document.querySelector(".text-container p");
     const array = currentParagraph.split("");
     const character = e.key;
+
+    // check current index is equal to paragraph length
+    if (currentIndex === currentParagraph.length) {
+      isTyping = false;
+      isTimingStart = false;
+      clearInterval(unSubscribeSetInterval);
+      return;
+    }
 
     const prevActiveSpan = document.querySelector(
       ".text-container p span.active"
@@ -108,30 +158,19 @@ document.addEventListener("keydown", (e) => {
 
     if (character === array[currentIndex]) {
       prevActiveSpan.classList.add("correct");
-      totalCorrectChar++;
+      correctCha++;
     } else {
       prevActiveSpan.classList.add("incorrect");
       mistakes++;
     }
     currentIndex++;
-    console.log(currentIndex);
 
-    let calculateWPM = Math.floor(
-      (currentIndex - mistakes) / (maxTime - timeLeft)
-    );
-    console.log(calculateWPM);
-    wpm =
-      calculateWPM < 0 || !calculateWPM || calculateWPM === Infinity
-        ? 0
-        : calculateWPM;
-    console.log(wpm);
-    wpmEle.innerText = wpm;
-    mistakesEle.innerText = mistakes;
-    cpmEle.innerText = currentIndex - mistakes;
+    calculateSpeed();
+
     if (nextActiveSpan === null) {
-      console.log("finish");
       isTyping = false;
       isTimingStart = false;
+      modalPopup.style.display = "flex";
       clearInterval(unSubscribeSetInterval);
       return;
     }
@@ -139,5 +178,23 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-function restartGame() {}
-tryAgain.addEventListener("click");
+function restartGame() {
+  displayText();
+  modalPopup.style.display = "none";
+  clearInterval(unSubscribeSetInterval);
+  currentIndex = 0;
+  totalCorrectChar = 0;
+  mistakes = 0;
+  wpm = 0;
+  cpm = 0;
+  timeLeft = maxTime;
+  isTimingStart = false;
+  isTyping = false;
+
+  wpmEle.innerText = wpm;
+  cpmEle.innerText = cpm;
+  mistakesEle.innerText = mistakes;
+  timeLeftEle.innerText = timeLeft;
+}
+
+tryAgain.addEventListener("click", restartGame);

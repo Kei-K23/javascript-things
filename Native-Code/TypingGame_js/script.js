@@ -11,9 +11,12 @@ const mistakesEle = document.querySelector(".mistakes b");
 const wpmEle = document.querySelector(".wpm b");
 const cpmEle = document.querySelector(".cpm b");
 const accuracyEle = document.querySelector(".accuracy b");
-const tryAgain = document.querySelector(".tryAgain");
+const restartBtn = document.querySelectorAll(".tryAgain");
 
-const modalTryAgain = document.querySelector(".modal-tryAgain");
+const modalMistakesEle = document.querySelector(".modal-mistakes b");
+const modalWpmEle = document.querySelector(".modal-wpm b");
+const modalCpmEle = document.querySelector(".modal-cpm b");
+const modalAccuracyEle = document.querySelector(".modal-accuracy b");
 
 const modalPopup = document.querySelector(".modal-popup");
 
@@ -27,6 +30,7 @@ let maxTime = 60,
   correctCha = 0,
   isTyping = false,
   mistakes = 0,
+  accuracy = 0,
   wpm,
   cpm;
 
@@ -46,30 +50,6 @@ function checkForKeyWord(keyWord) {
   } else {
     return false;
   }
-}
-
-function displayModalPopUp(wpm, cpm, accuracy, mistakes) {
-  modalPopup.innerHTML = "";
-  modalPopup.innerHTML = `
-  <div class="modal-content">
-        <h2>Your result</h2>
-        <ul class="modal-results">
-          <li class="modal-result">
-            <h3 class="modal-wpm">Words Per Minute (WPM): <b>${wpm}</b></h3>
-          </li>
-          <li class="modal-result">
-            <h3 class="modal-cpm">Characters Per Minute (CPM): <b>${cpm}</b></h3>
-          </li>
-          <li class="modal-result">
-            <h3 class="modal-accuracy">Accuracy: <b>${accuracy}%</b></h3>
-          </li>
-          <li class="modal-result">
-            <h3 class="modal-mistakes">Total Mistakes: <b>${mistakes}</b></h3>
-          </li>
-        </ul>
-        <h2 class="modal-tryAgain">Try Again</h2>
-      </div>
-  `;
 }
 
 function displayText() {
@@ -106,10 +86,17 @@ function duration() {
 
 displayText();
 
+function calculateAccuracy(correctCharacters, totalCharacters) {
+  return totalCharacters === 0
+    ? 0
+    : Math.round((correctCharacters / totalCharacters) * 100);
+}
+
 // Calculate WPM and CPM
 function calculateSpeed() {
   const totalTyped = currentIndex;
   const totalMistakes = mistakes;
+  let totalAccuracy = accuracy;
   const totalCorrectCha = correctCha - mistakes;
   const totalCha = currentParagraph.length;
   const timeInMinutes = (maxTime - timeLeft) / 60; // Convert seconds to minutes
@@ -117,7 +104,7 @@ function calculateSpeed() {
   const grossWPM = (totalTyped - totalMistakes) / timeInMinutes;
   const netWPM = Math.round(grossWPM - totalMistakes / timeInMinutes);
   const netCPM = Math.round(netWPM * 5); // Assuming an average word length of 5 characters
-  const accuracy = Math.round((totalCorrectCha / totalCha) * 100);
+  totalAccuracy = Math.round((totalCorrectCha / totalCha) * 100);
 
   const wpm = !netCPM || netCPM < 0 || netCPM === NaN ? 0 : Math.max(netWPM, 0);
   const cpm = !netCPM || netCPM < 0 || netCPM === NaN ? 0 : Math.max(netCPM, 0);
@@ -126,8 +113,16 @@ function calculateSpeed() {
   // Ensure it's not negative
   cpmEle.innerText = cpm;
   // Ensure it's not negative
-  accuracyEle.innerText = `${accuracy}%`;
+  accuracyEle.innerText = `${totalAccuracy < 0 ? 0 : totalAccuracy}%`;
   mistakesEle.innerText = totalMistakes;
+
+  // update DOM
+  modalWpmEle.innerText = wpm;
+  // Ensure it's not negative
+  modalCpmEle.innerText = cpm;
+  // Ensure it's not negative
+  modalAccuracyEle.innerText = `${totalAccuracy < 0 ? 0 : totalAccuracy}%`;
+  modalMistakesEle.innerText = totalMistakes;
 }
 
 document.addEventListener("keydown", (e) => {
@@ -166,6 +161,10 @@ document.addEventListener("keydown", (e) => {
     currentIndex++;
 
     calculateSpeed();
+    accuracy = calculateAccuracy(
+      correctCha - mistakes,
+      currentParagraph.length
+    );
 
     if (nextActiveSpan === null) {
       isTyping = false;
@@ -187,6 +186,7 @@ function restartGame() {
   mistakes = 0;
   wpm = 0;
   cpm = 0;
+  accuracy = 0;
   timeLeft = maxTime;
   isTimingStart = false;
   isTyping = false;
@@ -195,6 +195,11 @@ function restartGame() {
   cpmEle.innerText = cpm;
   mistakesEle.innerText = mistakes;
   timeLeftEle.innerText = timeLeft;
+  accuracyEle.innerText = "0%";
 }
 
-tryAgain.addEventListener("click", restartGame);
+restartBtn.forEach((btn) => {
+  btn.addEventListener("click", restartGame);
+});
+
+//! need to fix accuracy calculation
